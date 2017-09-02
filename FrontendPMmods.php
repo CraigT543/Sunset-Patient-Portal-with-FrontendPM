@@ -251,7 +251,7 @@ function action_delmessage($messageid) {
 // Logic to process the "putmessage" action.
 // Sends a message to the designated user with an optional attachment.
 // FrontendPM version
-function action_putmessage(&$args) {
+function action_putmessage($args) {
   global $wpdb, $out, $admin_user_login;
   $sender = convertToID($admin_user_login);
   if (!$sender) {
