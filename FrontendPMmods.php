@@ -132,10 +132,8 @@ function action_getmessage($messageid) {
 // FrontendPM version  
 function action_getmsgup($uploadid) {
   global $wpdb, $out;
-  $query = "SELECT ID, post_mime_type, guid " .
-	"FROM {$wpdb->prefix}posts " .
-    "WHERE id = %d";	
-  $rows = $wpdb->get_row($wpdb->prepare($query, array($uploadid)), ARRAY_A);
+  $query = $wpdb->prepare("SELECT ID, post_mime_type, guid FROM {$wpdb->prefix}posts WHERE ID = %d", array($uploadid));
+  $rows = $wpdb->get_results($query, ARRAY_A);
   
   foreach ($rows as $row) {
 	$url = $row['guid'];
@@ -145,7 +143,7 @@ function action_getmsgup($uploadid) {
 	$parts = array_slice($parts, -6);       // the last six
 	$path  = implode('/', $parts);  
 	$filepath = ABSPATH . $path;
-	
+
 	// Get file contents and make a blob.
 	$tmpfile = fopen($filepath, "r");
 	$contents = fread($tmpfile, filesize($filepath));  
@@ -153,6 +151,7 @@ function action_getmsgup($uploadid) {
 	$out['mimetype'] = $row['mimetype'];
 	// $out['contents'] = base64_encode($contents);
 	$out['contents'] = $contents;
+	
   }
 }
 
@@ -249,7 +248,79 @@ function action_delmessage($messageid) {
   }  
 }
 
+// Logic to process the "putmessage" action.
+// Sends a message to the designated user with an optional attachment.
+// FrontendPM version
+function action_putmessage(&$args) {
+  global $wpdb, $out, $admin_user_login;
+  $sender = convertToID($admin_user_login);
+  if (!$sender) {
+    $out['errmsg'] = "No such sender '$admin_user_login'";
+    return;
+  }
+  $recipient = convertToID($args['user']);
+  if (!$recipient) {
+    $out['errmsg'] = "No such recipient '{$args['user']}'";
+    return;
+  }
 
-/*
-* I am still working on the insert file function.  That is yet to be.
-*/
+	$year = date('Y');
+	$month = date('m');
+	$timestamp = idate("U"); 
+	$upload_dir =  ABSPATH . "wp-content/uploads/front-end-pm/" . $year . "/" . $month ;
+	if (!file_exists($upload_dir)) {
+		mkdir($upload_dir, 0755, true);
+	}	
+	$filename = $args['filename'];
+	$newfilename = wp_unique_filename( $upload_dir, $filename );
+	$pathtofile = $upload_dir . '/' . $newfilename;
+	$metafilepath = "front-end-pm/" . $year . "/" . $month . "/". $newfilename;
+	file_put_contents($pathtofile, base64_decode($args['contents']));
+
+
+	
+	$postarr = array(
+	 'post_status' => 'publish',
+	 'post_type' => 'post',
+	 'post_title' => $args['title'],
+	 'post_content' => $args['message'],
+	 'post_author' => $sender,
+	 'post_type' => 'fep_message', 
+	 );
+	 
+	$parent_post_id = wp_insert_post($postarr);
+
+
+	add_post_meta( $parent_post_id, '_fep_participants', $sender);	
+	add_post_meta( $parent_post_id, '_fep_participants', $recipient);	
+	add_post_meta( $parent_post_id, '_fep_parent_read_by_' .$sender , $timestamp);	
+	add_post_meta( $parent_post_id, '_fep_last_reply_time', $timestamp);	
+	add_post_meta( $parent_post_id, '_fep_last_reply_id', parent_post_id);
+	add_post_meta( $parent_post_id, '_fep_last_reply_by', $sender);
+	
+	if(!$parent_post_id) {
+		$out['errmsg'] = "Message insert failed";
+		return;
+	}
+
+	$attachment = array(
+	 'post_author' => $sender,
+	 'post_mime_type' => $args['mimetype'],
+	 'post_title' => preg_replace('/\.[^.]+$/', '', basename($pathtofile)),
+	 'post_content' => '',
+	 'post_status' => 'inherit',
+	 'guid' => $pathtofile,
+	);
+	
+	$attach_id = wp_insert_attachment( $attachment, $pathtofile, $parent_post_id );
+	
+	// Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
+	require_once( ABSPATH . 'wp-admin/includes/image.php' );
+	// Generate the metadata for the attachment, and update the database record.
+	$attach_data = wp_generate_attachment_metadata( $attach_id, $pathtofile );
+	wp_update_attachment_metadata( $attach_id, $attach_data );
+		
+	if ($attach_id === false) {
+	  $out['errmsg'] = "Attachment insert failed";
+	}
+}
