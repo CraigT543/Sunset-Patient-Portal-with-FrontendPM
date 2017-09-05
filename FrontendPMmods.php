@@ -251,76 +251,71 @@ function action_delmessage($messageid) {
 // Logic to process the "putmessage" action.
 // Sends a message to the designated user with an optional attachment.
 // FrontendPM version
-function action_putmessage($args) {
-  global $wpdb, $out, $admin_user_login;
-  $sender = convertToID($admin_user_login);
-  if (!$sender) {
-    $out['errmsg'] = "No such sender '$admin_user_login'";
-    return;
-  }
-  $recipient = convertToID($args['user']);
-  if (!$recipient) {
-    $out['errmsg'] = "No such recipient '{$args['user']}'";
-    return;
-  }
+function action_putmessage( $args ) {
+	global $out, $admin_user_login;
+	
+	if( ! function_exists( 'fep_send_message' ) )
+	return false;
+	
+	$sender = fep_get_userdata( $admin_user_login, 'ID', 'login' );
+	
+	if (!$sender) {
+		$out['errmsg'] = "No such sender '$admin_user_login'";
+		return false;
+	}
+	$recipient = fep_get_userdata( $args['user'], 'ID', 'login' );
+	if (!$recipient) {
+		$out['errmsg'] = "No such recipient '{$args['user']}'";
+		return false;
+	}
+	$message = array(
+		'message_title' => $args['title'],
+		'message_content' => $args['message'],
+		'message_to_id' => $recipient,	
+	);
+	$override = array(
+		'post_author' => $sender,
+	);
+	$message_id = fep_send_message( $message, $override );
+	
+	$upload_dir = wp_upload_dir();
+	$upload_dir = $upload_dir['basedir'];	
+	$subdir = '';
+	if ( get_option( 'uploads_use_yearmonth_folders' ) ) {
+			$time = current_time( 'mysql' );
 
-	$year = date('Y');
-	$month = date('m');
-	$timestamp = idate("U"); 
-	$upload_dir =  ABSPATH . "wp-content/uploads/front-end-pm/" . $year . "/" . $month ;
-	if (!file_exists($upload_dir)) {
-		mkdir($upload_dir, 0755, true);
-	}	
+		$y = substr( $time, 0, 4 );
+		$m = substr( $time, 5, 2 );
+
+		$subdir = "/$y/$m";    
+	}
+	$upsub	= '/front-end-pm' . $subdir;
 	$filename = $args['filename'];
 	$newfilename = wp_unique_filename( $upload_dir, $filename );
-	$pathtofile = $upload_dir . '/' . $newfilename;
-	$metafilepath = "front-end-pm/" . $year . "/" . $month . "/". $newfilename;
-	file_put_contents($pathtofile, base64_decode($args['contents']));
-
-
+	$pathtofile = $upload_dir . $upsub . '/' . $newfilename;
+	$content = isset( $args['contents'] ) ? base64_decode($args['contents']) : '';
 	
-	$postarr = array(
-	 'post_status' => 'publish',
-	 'post_type' => 'post',
-	 'post_title' => $args['title'],
-	 'post_content' => $args['message'],
-	 'post_author' => $sender,
-	 'post_type' => 'fep_message', 
-	 );
-	 
-	$parent_post_id = wp_insert_post($postarr);
+	$size_limit = (int) wp_convert_hr_to_bytes(fep_get_option('attachment_size','4MB'));
+	$size = strlen( $content );
+	if( $size > $size_limit )
+	return false;
 
+	$mime = isset( $args['mimetype'] ) ? $args['mimetype'] : '';
+	if( !$mime || !in_array( $mime, get_allowed_mime_types() ) )
+	return false;
 
-	add_post_meta( $parent_post_id, '_fep_participants', $sender);	
-	add_post_meta( $parent_post_id, '_fep_participants', $recipient);	
-	add_post_meta( $parent_post_id, '_fep_parent_read_by_' .$sender , $timestamp);	
-	add_post_meta( $parent_post_id, '_fep_last_reply_time', $timestamp);	
-	add_post_meta( $parent_post_id, '_fep_last_reply_id', parent_post_id);
-	add_post_meta( $parent_post_id, '_fep_last_reply_by', $sender);
+	file_put_contents($pathtofile, $content);
 	
-	if(!$parent_post_id) {
-		$out['errmsg'] = "Message insert failed";
-		return;
-	}
-
 	$attachment = array(
-	 'post_author' => $sender,
+	 'guid' => $pathtofile,
 	 'post_mime_type' => $args['mimetype'],
 	 'post_title' => preg_replace('/\.[^.]+$/', '', basename($pathtofile)),
 	 'post_content' => '',
+	 'post_author' => $sender,
 	 'post_status' => 'inherit',
-	 'guid' => $pathtofile,
+
 	);
-	
-	$attach_id = wp_insert_attachment( $attachment, $pathtofile, $parent_post_id );
-	
-	// Make sure that this file is included, as wp_generate_attachment_metadata() depends on it.
-	require_once( ABSPATH . 'wp-admin/includes/image.php' );
-	// Generate the metadata for the attachment, and update the database record.
-	$attach_data = wp_generate_attachment_metadata( $attach_id, $pathtofile );
-	wp_update_attachment_metadata( $attach_id, $attach_data );
-		
-	if ($attach_id === false) {
-	  $out['errmsg'] = "Attachment insert failed";
-	}
+
+	$attach_id = wp_insert_attachment( $attachment, $pathtofile, $message_id );
+
 }
