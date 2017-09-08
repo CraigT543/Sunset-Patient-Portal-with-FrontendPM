@@ -134,7 +134,7 @@ function action_getmsgup($uploadid) {
   global $wpdb, $out;
   $query = $wpdb->prepare("SELECT ID, post_mime_type, guid FROM {$wpdb->prefix}posts WHERE ID = %d", array($uploadid));
   $rows = $wpdb->get_results($query, ARRAY_A);
-  
+	  
   foreach ($rows as $row) {
 	$url = $row['guid'];
 	$filename = basename($url);
@@ -143,15 +143,15 @@ function action_getmsgup($uploadid) {
 	$parts = array_slice($parts, -6);       // the last six
 	$path  = implode('/', $parts);  
 	$filepath = ABSPATH . $path;
-
-	// Get file contents and make a blob.
-	$tmpfile = fopen($filepath, "r");
-	$contents = fread($tmpfile, filesize($filepath));  
-    $out['filename'] = $filename;
-	$out['mimetype'] = $row['mimetype'];
-	// $out['contents'] = base64_encode($contents);
-	$out['contents'] = $contents;
-	
+	$contents = file_get_contents($filepath);
+	if ($contents === false) {
+	  $out['errmsg'] = "Unable to read \"$filepath\"";
+	  return;
+	}
+	$out['filename'] = $filename;
+	$out['mimetype'] = $row['post_mime_type'];
+	$out['datetime'] = $row['post_date'];
+	$out['contents'] = base64_encode($contents);
   }
 }
 
