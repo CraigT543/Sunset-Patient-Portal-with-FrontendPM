@@ -138,13 +138,11 @@ function action_getmsgup($uploadid) {
   foreach ($rows as $row) {
 	$url = $row['guid'];
 	$filename = basename($url);
+	$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
+	$parts = explode('/', $path);           // all the components
 	if ( get_option( 'uploads_use_yearmonth_folders' ) ) {
-		$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
-		$parts = explode('/', $path);           // all the components
 		$parts = array_slice($parts, -6);       // the last six
 	}	else {
-		$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
-		$parts = explode('/', $path);           // all the components
 		$parts = array_slice($parts, -4);       // the last 4
 	}
 	$path  = implode('/', $parts);  
@@ -157,7 +155,7 @@ function action_getmsgup($uploadid) {
 	$out['filename'] = $filename;
 	$out['mimetype'] = $row['post_mime_type'];
 	$out['datetime'] = $row['post_date'];
-	$out['contents'] = base64_encode($contents);
+	$out['contents'] = $contents;
   }
 }
 
@@ -239,13 +237,11 @@ function action_delmessage($messageid) {
 		foreach ($row5s as $row5) {
 			$url = $row5['guid'];
 			$filename = basename($url);
+			$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
+			$parts = explode('/', $path);           // all the components
 			if ( get_option( 'uploads_use_yearmonth_folders' ) ) {
-				$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
-				$parts = explode('/', $path);           // all the components
 				$parts = array_slice($parts, -6);       // the last six
 			}	else {
-				$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
-				$parts = explode('/', $path);           // all the components
 				$parts = array_slice($parts, -4);       // the last 4
 			}
 			$path  = implode('/', $parts);  
