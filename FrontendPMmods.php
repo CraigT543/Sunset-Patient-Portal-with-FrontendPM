@@ -138,9 +138,15 @@ function action_getmsgup($uploadid) {
   foreach ($rows as $row) {
 	$url = $row['guid'];
 	$filename = basename($url);
-	$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
-	$parts = explode('/', $path);           // all the components
-	$parts = array_slice($parts, -6);       // the last six
+	if ( get_option( 'uploads_use_yearmonth_folders' ) ) {
+		$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
+		$parts = explode('/', $path);           // all the components
+		$parts = array_slice($parts, -6);       // the last six
+	}	else {
+		$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
+		$parts = explode('/', $path);           // all the components
+		$parts = array_slice($parts, -4);       // the last 4
+	}
 	$path  = implode('/', $parts);  
 	$filepath = ABSPATH . $path;
 	$contents = file_get_contents($filepath);
@@ -233,9 +239,15 @@ function action_delmessage($messageid) {
 		foreach ($row5s as $row5) {
 			$url = $row5['guid'];
 			$filename = basename($url);
-			$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
-			$parts = explode('/', $path);           // all the components
-			$parts = array_slice($parts, -6);       // the last six
+			if ( get_option( 'uploads_use_yearmonth_folders' ) ) {
+				$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
+				$parts = explode('/', $path);           // all the components
+				$parts = array_slice($parts, -6);       // the last six
+			}	else {
+				$path  = parse_url($url, PHP_URL_PATH); // just the path part of the URL
+				$parts = explode('/', $path);           // all the components
+				$parts = array_slice($parts, -4);       // the last 4
+			}
 			$path  = implode('/', $parts);  
 			$filepath = ABSPATH . $path;
 			unlink($filepath); //Delete the file from the server.
@@ -283,10 +295,8 @@ function action_putmessage( $args ) {
 	$subdir = '';
 	if ( get_option( 'uploads_use_yearmonth_folders' ) ) {
 			$time = current_time( 'mysql' );
-
 		$y = substr( $time, 0, 4 );
 		$m = substr( $time, 5, 2 );
-
 		$subdir = "/$y/$m";    
 	}
 	$upsub	= '/front-end-pm' . $subdir;
@@ -315,7 +325,5 @@ function action_putmessage( $args ) {
 	 'post_status' => 'inherit',
 
 	);
-
 	$attach_id = wp_insert_attachment( $attachment, $pathtofile, $message_id );
-
 }
