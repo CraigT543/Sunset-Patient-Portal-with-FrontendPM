@@ -4,6 +4,40 @@
 * The following is to modify the action_list function at the point where you find the " Get list of messages also" comment to the end of the function.
 */
 
+/*
+* The following replaces these two variables near the top of webserve.php:
+*     $adminOps = get_option('cartpaujPM_options');
+*     $admin_user_login = $adminOps['admin_user_login'];
+*/
+
+// These are the administrative settings for the Frontend PM plugin.
+// We need to know who its messaging administrator is. This is likely to
+// be the same as $_REQUEST['login'] but we cannot assume that.  This
+// routine checks to be sure that $_REQUEST['login'] is an authorized
+// admin in Frontend PM 
+
+$adminOps = fep_get_option('oa_admins', array());
+$wpuser = get_user_by( 'email', $_REQUEST['login'] );
+$userlogin = $wpuser->user_login;
+$count = count($adminOps)-1;
+
+$i = 0;
+$admins = array();
+while($i <= $count) {
+	$admins[] = $adminOps['oa_' . $i ]['username'];
+	$i++;
+}
+
+if (in_array($userlogin, $admins)){
+	$admin_user_login = $userlogin;
+} else {
+	  $out['errmsg'] = $userlogin ." is not an authorized administrator in Frontend PM Pro. Please go to Frontend PM Pro > Settings > Recipiant and add the user name to the Admins field.";
+}
+
+/*
+* The following replace the queries for cartpauj PM at the respective comment lines
+*/
+
   // Get list of messages also.
   // FrontendPM version
   //Current user ID 
