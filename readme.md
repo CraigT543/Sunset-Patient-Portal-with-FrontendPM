@@ -30,11 +30,14 @@ function undelete_thread($post_id) {
 <h2>Front End PM Settings</h2>
 I have made several changes to the settings to make it work like Cartpauj PM.  I am limitting all communication to be between the therapist and one client only.  I am also making my email messages only contain enough information to guide the client back to my site to read the message.  No message content should be in the email to keep true to HIPPA principles.
 <h3>GENERAL SETTINGS</h3>
-Front End Page: PM
-Messages to show per page: 15
-Max user per page in directory: 50
-Time delay: 5
-Custom CSS:
+<ul>
+	<li>Front End Page: PM</li>
+	<li>Messages to show per page: 15</li>
+	<li>Max user per page in directory: 50</li>
+	<li>Time delay: 5</li>
+	<li>Custom CSS:</li>
+</ul>
+<code>
 div.fep-message-content.fep-message-content-2258.fep-hide-if-js{
     display: block !important;
 }
@@ -42,28 +45,30 @@ div.fep-message-content.fep-message-content-2258.fep-hide-if-js{
 .fep-message-title-heading.participants {
     font-size: 10px;
 }
-
-Editor Type: WP Editor
-Parent Message Status: Publish
-Reply Message Status: Publish
-Allow Attachment: X
-Max Size of attachment: 4MB
-Maximum Number of attachment: 4
-Hide Directory from front end: X
-Hide site wide notification:
-Hide Branding Fotter:
-Remove Data on Uninstall?
-
+</code>
+<ul>
+	<li>Editor Type: WP Editor</li>
+	<li>Parent Message Status: Publish</li>
+	<li>Reply Message Status: Publish</li>
+	<li>Allow Attachment: X</li>
+	<li>Max Size of attachment: 4MB</li>
+	<li>Maximum Number of attachment: 4</li>	
+	<li>Hide Directory from front end: X</li>	
+	<li>Hide site wide notification:</li>	
+	<li>Hide Branding Fotter:</li>	
+	<li>Remove Data on Uninstall?</li>	
+</ul>
 <h3>RECEPIANT</h3>
-Can send to users:
-Can admin send to users: x
-Max recipiants: 1
-Message type: same message
-Read Receipt: x
-Can send to admin: x
-Admins: Administrator craigtuckerlcsw
-Show in frontend as: Select
-
+<ul>
+	<li>Can send to users:</li>
+	<li>Can admin send to users: x</li>
+	<li>Max recipiants: 1</li>
+	<li>Message type: same message</li>
+	<li>Read Receipt: x</li>
+	<li>Can send to admin: x</li>
+	<li>Admins: Administrator [myadmin name]</li>
+	<li>Show in frontend as: Select</li>
+</ul>
 <h3>MESSAGE</h3>
 Message view: thread
 
@@ -71,66 +76,78 @@ Message view: thread
 Send email? uncheck
 
 <h3>EMAILS</h3>
-Email content Type: Html
-From Name: [My practice name here]
-From Email: [My practice email here]
-Enable piping: check 
-Piping Email: [My practice email here]
-Clean reply quote: check
-New message email template: Default
-New message subject: 	{{site_title}} - New message
-New message content:
-
+<ul>
+	<li>Email content Type: Html</li>
+	<li>From Name: [My practice name here]</li>
+	<li>From Email: [My practice email here]</li>
+	<li>Enable piping: check </li>
+	<li>Piping Email: [My practice email here]</li>
+	<li>Clean reply quote: check</li>
+	<li>New message email template: Default</li>
+	<li>New message subject: 	{{site_title}} - New message</li>
+	<li>New message content:</li>
+</ul>
+<code>
 Hi {{receiver}},
 
 You have received a new message at the {{site_title}} portal. Please view the message at this link: <a href="{{message_url}}">My Message</a>
 
 {{site_title}}
-
-Send Attachments: uncheck
-
-Replay message email template: default
-Reply subject: {{site_title}} - New reply
-Reply content:
-
+</code>
+<ul>
+	<li>Send Attachments: uncheck  (I do not want to accidentally send out any paitient information in an attachment)</li>
+	<li>Replay message email template: default</li>
+	<li>Reply subject: {{site_title}} - New reply</li>
+	<li>Reply content:</li>
+</ul>
+<code>
 Hi {{receiver}},
 
 You have received a new reply of your message at the {{site_title}} portal. Please view the message at this link: <a href="{{message_url}}">My Message</a>
 
 {{site_title}}
-
-Send Attachments: uncheck
-Sending Interval: 60
-Emails send per interval: 100
-
-Announcement email template: default
+</code>
+<ul>
+	<li>Send Attachments: uncheck  (I do not want to accidentally send out any paitient information in an attachment)</li>
+	<li>Sending Interval: 60</li>
+	<li>Emails send per interval: 100</li>
+	<li>Announcement email template: default</li>
+</ul>
+<code>
 Hi {{receiver}},
 
 You have received a new reply of your message at the {{site_title}} portal. Please view the message at this link: <a href="{{message_url}}">My Message</a>
 
 {{site_title}}
-
-Send Attachments: uncheck
-
+</code>
+<ul>
+	<li>Send Attachments: uncheck  (I do not want to accidentally send out any paitient information in an attachment)</li>
+</ul>
 <h3>SECURITY:</h3>
-Who can access message system?	
-Administrator
-Client
-Client TM
+<p>Who can access message system?</p>
+<ul>
+	<li>Administrator</li>
+	<li>Client [Or Patient if you are set up that way]</li>
+</ul>
+<p>Who can send new message?</p>
+<ul>
+	<li>Administrator</li>
+	<li>Client [Or Patient if you are set up that way]</li>
+</ul>
+<p>Who can send reply?</p>	
+<ul>
+	<li>Administrator</li>
+	<li>Client [Or Patient if you are set up that way]</li>
+</ul>
 
-Who can send new message?
-Administrator
-Client
-Client TM
-
-Who can send reply?	
-Administrator
-Client
-Client TM
-
-Whitelist Username: blank
-Blacklist Username: blank
-
+<ul>
+	<li>Whitelist Username: blank</li>
+	<li>Blacklist Username: blank</li>
+</ul>
 <h3>LICENCES</h3>
-Frontend PM PRO License
-[My licence Key]
+<p>Frontend PM PRO License</p>
+<ul>
+	<li>[My licence Key]</li>
+</ul>
+
+
