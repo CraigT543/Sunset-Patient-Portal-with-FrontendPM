@@ -16,18 +16,18 @@ $display_name = trim($info->first_name . ' ' . $info->last_name . '--' . $info->
 <code>
 //For Front End PM to undelete a participant from a thread if the other active participant(s) post following deletion of one participant.  This will maintain the all participants in a thread until all delete themselves from the thread. </code>
 
-<code>add_action('save_post', 'undelete_thread');</code>
-<code>function undelete_thread($post_id) {</code>
-<code>	$post = get_post($post_id);</code>
-<code>	if ($post->post_type = 'fep_message' && $post->post_parent != 0){</code>
-<code>		$participants = fep_get_participants( $post->post_parent );</code>
-<code>		foreach( $participants as $participant )</code>		
+<code>add_action('save_post', 'undelete_thread');</code><br>
+<code>function undelete_thread($post_id) {</code><br>
+<code>	$post = get_post($post_id);</code><br>
+<code>	if ($post->post_type = 'fep_message' && $post->post_parent != 0){</code><br>
+<code>		$participants = fep_get_participants( $post->post_parent );</code><br>
+<code>		foreach( $participants as $participant )</code><br>		
 <code>		{</code>
-<code>			delete_post_meta($post->post_parent,'_fep_delete_by_'. $participant );	</code>
-<code>		}</code>
-<code>	}</code>
-<code>}</code>
-</code>
+<code>			delete_post_meta($post->post_parent,'_fep_delete_by_'. $participant );	</code><br>
+<code>		}</code><br>
+<code>	}</code><br>
+<code>}</code><br>
+
 <h2>Front End PM Settings</h2>
 I have made several changes to the settings to make it work like Cartpauj PM.  I am limitting all communication to be between the therapist and one client only.  I am also making my email messages only contain enough information to guide the client back to my site to read the message.  No message content should be in the email to keep true to HIPPA principles.
 <h3>GENERAL SETTINGS</h3>
