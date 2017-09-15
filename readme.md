@@ -87,13 +87,9 @@ Send email? uncheck
 	<li>New message subject: 	{{site_title}} - New message</li>
 	<li>New message content:</li>
 </ul>
-<code>
-Hi {{receiver}},
-
-You have received a new message at the {{site_title}} portal. Please view the message at this link: <a href="{{message_url}}">My Message</a>
-
-{{site_title}}
-</code>
+<code>Hi {{receiver}},</code>
+<code>You have received a new message at the {{site_title}} portal. Please view the message at this link: <a href="{{message_url}}">My Message</a></code>
+<code>{{site_title}}</code>
 <ul>
 	<li>Send Attachments: uncheck  (I do not want to accidentally send out any paitient information in an attachment)</li>
 	<li>Replay message email template: default</li>
@@ -101,11 +97,9 @@ You have received a new message at the {{site_title}} portal. Please view the me
 	<li>Reply content:</li>
 </ul>
 <code>
-Hi {{receiver}},
-
-You have received a new reply of your message at the {{site_title}} portal. Please view the message at this link: <a href="{{message_url}}">My Message</a>
-
-{{site_title}}
+<code>Hi {{receiver}},</code>
+<code>You have received a new reply of your message at the {{site_title}} portal. Please view the message at this link: <a href="{{message_url}}">My Message</a></code>
+<code>{{site_title}}</code>
 </code>
 <ul>
 	<li>Send Attachments: uncheck  (I do not want to accidentally send out any paitient information in an attachment)</li>
@@ -114,11 +108,9 @@ You have received a new reply of your message at the {{site_title}} portal. Plea
 	<li>Announcement email template: default</li>
 </ul>
 <code>
-Hi {{receiver}},
-
-You have received a new reply of your message at the {{site_title}} portal. Please view the message at this link: <a href="{{message_url}}">My Message</a>
-
-{{site_title}}
+<code>Hi {{receiver}},</code>
+<code>You have received a new reply of your message at the {{site_title}} portal. Please view the message at this link: <a href="{{message_url}}">My Message</a></code>
+<code>{{site_title}}</code>
 </code>
 <ul>
 	<li>Send Attachments: uncheck  (I do not want to accidentally send out any paitient information in an attachment)</li>
