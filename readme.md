@@ -14,18 +14,19 @@ $display_name = trim($info->first_name . ' ' . $info->last_name . '--' . $info->
 <h2>Necessary Function to Add</h2>
 <p>I have added a function to my theme's functions.php file.  This is necessary for the time being because as Front End PM is set up now, if one participant of a thread deletes them selves from the thread, they are disconnected from all future posts to the thread.  This is fine in some situations but not in clinical situations.  I have talked to the author about this and he will be adding an option to revive the thread in the future but for now, the following function will revive all participants if one participant remains active and posts to the thread.</p>
 <code>
-//For Front End PM to undelete a participant from a thread if the other active participant(s) post following deletion of one participant.  This will maintain the all participants in a thread until all delete themselves from the thread. 
-add_action('save_post', 'undelete_thread');
-function undelete_thread($post_id) {
-	$post = get_post($post_id);
-	if ($post->post_type = 'fep_message' && $post->post_parent != 0){
-		$participants = fep_get_participants( $post->post_parent );
-		foreach( $participants as $participant )		
-		{
-			delete_post_meta($post->post_parent,'_fep_delete_by_'. $participant );	
-		}
-	}
-}
+//For Front End PM to undelete a participant from a thread if the other active participant(s) post following deletion of one participant.  This will maintain the all participants in a thread until all delete themselves from the thread. </code>
+
+<code>add_action('save_post', 'undelete_thread');</code>
+<code>function undelete_thread($post_id) {</code>
+<code>	$post = get_post($post_id);</code>
+<code>	if ($post->post_type = 'fep_message' && $post->post_parent != 0){</code>
+<code>		$participants = fep_get_participants( $post->post_parent );</code>
+<code>		foreach( $participants as $participant )</code>		
+<code>		{</code>
+<code>			delete_post_meta($post->post_parent,'_fep_delete_by_'. $participant );	</code>
+<code>		}</code>
+<code>	}</code>
+<code>}</code>
 </code>
 <h2>Front End PM Settings</h2>
 I have made several changes to the settings to make it work like Cartpauj PM.  I am limitting all communication to be between the therapist and one client only.  I am also making my email messages only contain enough information to guide the client back to my site to read the message.  No message content should be in the email to keep true to HIPPA principles.
