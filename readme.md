@@ -19,8 +19,8 @@ $display_name = trim($info->first_name . ' ' . $info->last_name . '--' . $info->
 <code>add_action('save_post', 'undelete_thread');</code><br>
 <code>function undelete_thread($post_id) {</code><br>
 <code>	$post = get_post($post_id);</code><br>
-<code>	if ($post->post_type = 'fep_message' && $post->post_parent != 0){</code><br>
-<code>		$participants = fep_get_participants( $post->post_parent );</code><br>
+<code>	if ($post->post_type == 'fep_message' && $post->post_parent){</code><br>
+<code>		$participants = fep_get_participants( $post->ID );</code><br>
 <code>		foreach( $participants as $participant )</code><br>		
 <code>		{</code>
 <code>			delete_post_meta($post->post_parent,'_fep_delete_by_'. $participant );	</code><br>
